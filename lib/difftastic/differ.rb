@@ -294,7 +294,7 @@ class Difftastic::Differ
 			("--tab-width=#{@tab_width}" if @tab_width),
 		].compact!
 
-		result = Difftastic.execute(options.join(" "))
+		result = Difftastic.execute(options.join(" ")).strip
 
 		unless @show_paths
 			new_line_index = result.index("\n") + 1
@@ -322,7 +322,7 @@ class Difftastic::Differ
 			end
 
 			# Insert formatted labels at the top
-			result = "\n#{left_part}#{right_part}#{Difftastic::ANSI.reset}\n#{result}"
+			result = "#{left_part}#{right_part}#{Difftastic::ANSI.reset}\n#{result}"
 		end
 
 		# Removed due to inconsistencies in the original output. Need to improve the pattern matching.
