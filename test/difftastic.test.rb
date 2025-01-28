@@ -15,7 +15,7 @@ test "set" do
 
 	output = Difftastic::Differ.new.diff_objects(Set.new, Set.new([1]))
 
-	assert_equal output, "1 Set: {}                     1 Set: {1}\n\n"
+	assert_equal output, "1 Set[]                       1 Set[1]\n\n"
 end
 
 test "html" do

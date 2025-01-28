@@ -19,7 +19,7 @@ test "sets are sorted" do
 	object = Set[2, 3, 1]
 
 	assert_equal_ruby Difftastic.pretty(object), <<~RUBY.chomp
-		Set: {1, 2, 3}
+		Set[1, 2, 3]
 	RUBY
 end
 
@@ -132,7 +132,7 @@ test "long arrays" do
 		a: [1, 2, 3],
 		b: {
 			"c" => 1.3232332,
-			[1, 2, 3] => Set: {1, 2, 3, 4},
+			[1, 2, 3] => Set[1, 2, 3, 4],
 		},
 	},
 	[
