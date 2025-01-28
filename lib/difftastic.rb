@@ -107,6 +107,8 @@ module Difftastic
 				"[#{items.join(', ')}]"
 			end
 		when Set
+			return %(Set: {}) if object.empty?
+
 			new_lines = false
 			length = 0
 			items = object.to_a.sort!.map do |item|
@@ -117,9 +119,9 @@ module Difftastic
 			end
 
 			if new_lines || length > max_width - (indent * tab_width)
-				"Set[\n#{"\t" * (indent + 1)}#{items.join(",\n#{"\t" * (indent + 1)}")},\n#{"\t" * indent}]"
+				"Set: {\n#{"\t" * (indent + 1)}#{items.join(",\n#{"\t" * (indent + 1)}")},\n#{"\t" * indent}}"
 			else
-				"Set[#{items.join(', ')}]"
+				"Set: {#{items.join(', ')}}"
 			end
 		when Module
 			object.name

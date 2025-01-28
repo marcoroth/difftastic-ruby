@@ -9,6 +9,15 @@ test do
 	assert_equal output, "\e[91;1m1 \e[0m[\e[91m1\e[0m, 2, \e[91m3\e[0m]                   \e[92;1m1 \e[0m[\e[92m3\e[0m, 2, \e[92m1\e[0m]\n\n"
 end
 
+test "set" do
+	a = "<html>\n\t<body>\n\t\t<h1>Hello, world!</h1>\n\t</body>\n</html>"
+	b = "<html>\n\t<body>\n\t\t<h1>Goodbye, world!</h1>\n\t</body>\n</html>"
+
+	output = Difftastic::Differ.new.diff_objects(Set.new, Set.new([1]))
+
+	assert_equal output, "1 Set: {}                     1 Set: {1}\n\n"
+end
+
 test "html" do
 	a = "<html>\n\t<body>\n\t\t<h1>Hello, world!</h1>\n\t</body>\n</html>"
 	b = "<html>\n\t<body>\n\t\t<h1>Goodbye, world!</h1>\n\t</body>\n</html>"
