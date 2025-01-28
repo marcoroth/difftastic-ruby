@@ -74,6 +74,8 @@ module Difftastic
 	def self.pretty(object, indent: 0, tab_width: 2, max_width: 60)
 		case object
 		when Hash
+			return "{}" if object.empty?
+
 			buffer = +"{\n"
 			indent += 1
 			object.each do |key, value|

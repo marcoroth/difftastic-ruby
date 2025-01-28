@@ -9,6 +9,42 @@ test do
 	assert_equal output, "\e[91;1m1 \e[0m[\e[91m1\e[0m, 2, \e[91m3\e[0m]                   \e[92;1m1 \e[0m[\e[92m3\e[0m, 2, \e[92m1\e[0m]\n\n"
 end
 
+test "empty set" do
+	output = Difftastic::Differ.new.diff_objects(
+		Set.new,
+		Set.new([1, 2, 3])
+	)
+
+	assert_equal output, "1 Set[]                       1 Set[1, 2, 3]\n\n"
+end
+
+test "empty array" do
+	output = Difftastic::Differ.new(color: :never, tab_width: 2).diff_objects(
+		[],
+		[3, 2, 1]
+	)
+
+	assert_equal output, "1 []                          1 [3, 2, 1]\n\n"
+end
+
+test "empty string" do
+	output = Difftastic::Differ.new(color: :never, tab_width: 2).diff_objects(
+		"",
+		"String"
+	)
+
+	assert_equal output, "1 \"\"                          1 \"String\"\n\n"
+end
+
+test "empty symbol" do
+	output = Difftastic::Differ.new(color: :never, tab_width: 2).diff_objects(
+		:"",
+		:Symbol
+	)
+
+	assert_equal output, "1 :\"\"                         1 :Symbol\n\n"
+end
+
 test "html" do
 	a = "<html>\n\t<body>\n\t\t<h1>Hello, world!</h1>\n\t</body>\n</html>"
 	b = "<html>\n\t<body>\n\t\t<h1>Goodbye, world!</h1>\n\t</body>\n</html>"

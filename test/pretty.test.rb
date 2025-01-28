@@ -15,6 +15,26 @@ test "object with no properties" do
 	RUBY
 end
 
+test "empty set" do
+	assert_equal_ruby Difftastic.pretty(Set.new), "Set[]"
+end
+
+test "empty array" do
+	assert_equal_ruby Difftastic.pretty([]), "[]"
+end
+
+test "empty object" do
+	assert_equal_ruby Difftastic.pretty({}), "{}"
+end
+
+test "empty string" do
+	assert_equal_ruby Difftastic.pretty(""), %("")
+end
+
+test "empty symbol" do
+	assert_equal_ruby Difftastic.pretty(:""), %(:"")
+end
+
 test "sets are sorted" do
 	object = Set[2, 3, 1]
 
