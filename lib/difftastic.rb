@@ -11,6 +11,9 @@ module Difftastic
 	GEM_NAME = "difftastic"
 	DEFAULT_DIR = File.expand_path(File.join(__dir__, "..", "exe"))
 
+	class ExecutableNotFoundException < StandardError
+	end
+
 	def self.execute(command)
 		`#{executable} #{command}`
 	end
@@ -125,6 +128,8 @@ module Difftastic
 			end
 		when Module
 			object.name
+		when Pathname
+			%(Pathname("#{object.to_path}"))
 		when Symbol, String, Integer, Float, Regexp, Range, Rational, Complex, true, false, nil
 			object.inspect
 		else

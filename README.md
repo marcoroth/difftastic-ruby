@@ -85,6 +85,7 @@ You can configure the `Difftastic::Differ` instance with various options:
 - `color`: Set the color mode (`:always`, `:never`, or `:auto`).
 - `syntax_highlight`: Enable or disable syntax highlighting (`:on` or `:off`).
 - `context`: Set the number of context lines to display.
+- `width`: Use this many columns when calculating line wrapping. If not specified, difftastic will detect the terminal width.
 - `tab_width`: Set the tab width for indentation.
 - `parse_error_limit`: Set the limit for parse errors.
 - `underline_highlights`: Enable or disable underlining highlights (`true` or `false`).
