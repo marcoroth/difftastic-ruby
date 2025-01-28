@@ -71,7 +71,7 @@ module Difftastic
 		exe_file
 	end
 
-	def self.pretty(object, indent: 0, tab_width: 2, max_width: 60)
+	def self.pretty(object, indent: 0, tab_width: 2, max_width: 60, max_depth: 5, max_instance_variables: 10)
 		case object
 		when Hash
 			return "{}" if object.empty?
@@ -130,18 +130,43 @@ module Difftastic
 		else
 			buffer = +""
 			instance_variables = object.instance_variables
-			if instance_variables.length > 0
+			if instance_variables.length > 0 && indent < max_depth
 				buffer << "#{object.class.name}(\n"
 				indent += 1
-				object.instance_variables.each do |name|
-					buffer << ("\t" * indent)
-					buffer << ":#{name} => "
-					buffer << pretty(object.instance_variable_get(name), indent:)
-					buffer << ",\n"
+
+				if indent < max_depth
+					object.instance_variables.take(max_instance_variables).each do |name|
+						buffer << ("\t" * indent)
+						buffer << ":#{name} => "
+
+						variable = object.instance_variable_get(name)
+
+						if variable && variable != object
+							if variable == object
+								buffer << "[self]"
+							else
+								buffer << pretty(variable, indent:).to_s
+							end
+						else
+							buffer << variable.inspect
+						end
+
+						buffer << ",\n"
+					end
+
+					if object.instance_variables.count > max_instance_variables
+						buffer << ("\t" * indent)
+						buffer << "...\n"
+					end
+				else
+					buffer << "..."
 				end
+
 				indent -= 1
 				buffer << ("\t" * indent)
 				buffer << ")"
+			elsif indent >= max_depth
+				buffer << "#{object.class.name}(...)"
 			else
 				buffer << "#{object.class.name}()"
 			end
