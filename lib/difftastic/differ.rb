@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Difftastic::Differ
+	DEFAULT_TAB_WIDTH = 2
+
 	def initialize(background: nil, color: nil, syntax_highlight: nil, context: nil, tab_width: nil, parse_error_limit: nil, underline_highlights: true, left_label: nil, right_label: nil, display: "side-by-side-show-both")
 		@show_paths = false
 		@background = background => :dark | :light | nil
@@ -16,7 +18,7 @@ class Difftastic::Differ
 	end
 
 	def diff_objects(old, new)
-		tab_width = @tab_width || 2
+		tab_width = @tab_width || DEFAULT_TAB_WIDTH
 
 		old = Difftastic.pretty(old, tab_width:)
 		new = Difftastic.pretty(new, tab_width:)
@@ -345,10 +347,11 @@ class Difftastic::Differ
 	private
 
 	def right_label_offset(line)
+		tab_width = @tab_width || DEFAULT_TAB_WIDTH
 		stripped_line = ::Difftastic::ANSI.strip_formatting(line)
-		_lhs, rhs = stripped_line.split(/\s{#{@tab_width},}/, 2)
+		_lhs, rhs = stripped_line.split(/\s{#{tab_width},}/, 2)
 
-		offset = (stripped_line.index("#{' ' * @tab_width}#{rhs}") || 0) + @tab_width
+		offset = (stripped_line.index("#{' ' * tab_width}#{rhs}") || 0) + tab_width
 		minimum_offset = 29
 
 		[minimum_offset, offset].max
