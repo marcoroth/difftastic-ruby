@@ -10,9 +10,6 @@ test do
 end
 
 test "set" do
-	a = "<html>\n\t<body>\n\t\t<h1>Hello, world!</h1>\n\t</body>\n</html>"
-	b = "<html>\n\t<body>\n\t\t<h1>Goodbye, world!</h1>\n\t</body>\n</html>"
-
 	output = Difftastic::Differ.new.diff_objects(Set.new, Set.new([1]))
 
 	assert_equal output, "1 Set[]                       1 Set[1]\n\n"
