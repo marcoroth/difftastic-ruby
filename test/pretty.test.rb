@@ -195,6 +195,10 @@ test "pathname" do
 	assert_equal_ruby Difftastic.pretty(Pathname.new("/")), <<~RUBY.chomp
 		Pathname("/")
 	RUBY
+
+	assert_equal_ruby Difftastic.pretty(Pathname.new("/path/to/somewhere.txt")), <<~RUBY.chomp
+		Pathname("/path/to/somewhere.txt")
+	RUBY
 end
 
 test "max_instance_variables" do
