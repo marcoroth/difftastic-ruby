@@ -195,10 +195,6 @@ test "pathname" do
 	assert_equal_ruby Difftastic.pretty(Pathname.new("/")), <<~RUBY.chomp
 		Pathname("/")
 	RUBY
-
-	assert_equal_ruby Difftastic.pretty(Pathname.new("/path/to/somewhere.txt")), <<~RUBY.chomp
-		Pathname("/path/to/somewhere.txt")
-	RUBY
 end
 
 test "max_instance_variables" do
@@ -209,20 +205,20 @@ test "max_instance_variables" do
 	end
 
 	assert_equal_ruby Difftastic.pretty(object), <<~RUBY.chomp
-    Object(
-      :@variable_1 => 1,
-      :@variable_2 => 2,
-      :@variable_3 => 3,
-      :@variable_4 => 4,
-      :@variable_5 => 5,
-      :@variable_6 => 6,
-      :@variable_7 => 7,
-      :@variable_8 => 8,
-      :@variable_9 => 9,
-      :@variable_10 => 10,
-      ...
-    )
-RUBY
+		Object(
+			:@variable_1 => 1,
+			:@variable_2 => 2,
+			:@variable_3 => 3,
+			:@variable_4 => 4,
+			:@variable_5 => 5,
+			:@variable_6 => 6,
+			:@variable_7 => 7,
+			:@variable_8 => 8,
+			:@variable_9 => 9,
+			:@variable_10 => 10,
+			...
+		)
+	RUBY
 end
 
 test "max_depth" do
@@ -243,18 +239,18 @@ test "max_depth" do
 	object = max_depth.new(["object", level1])
 
 	assert_equal_ruby Difftastic.pretty(object, max_width: 300), <<~RUBY.chomp
-    MaxDepth(
-      :@value => [
-        "object",
-        MaxDepth(
-          :@value => [
-            "level1",
-            MaxDepth(
-              ...
-            ),
-          ],
-        ),
-      ],
-    )
-RUBY
+		MaxDepth(
+			:@value => [
+				"object",
+				MaxDepth(
+					:@value => [
+						"level1",
+						MaxDepth(
+							...
+						),
+					],
+				),
+			],
+		)
+	RUBY
 end

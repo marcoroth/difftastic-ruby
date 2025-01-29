@@ -164,7 +164,8 @@ module Difftastic
 						buffer << "...\n"
 					end
 				else
-					buffer << "..."
+					buffer << ("\t" * indent)
+					buffer << "...\n"
 				end
 
 				indent -= 1
