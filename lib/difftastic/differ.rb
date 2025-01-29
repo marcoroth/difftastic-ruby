@@ -1,21 +1,25 @@
 # frozen_string_literal: true
 
 class Difftastic::Differ
-	def initialize(background: nil, color: nil, syntax_highlight: nil, context: nil, tab_width: nil, parse_error_limit: nil, underline_highlights: true, left_label: nil, right_label: nil)
+	DEFAULT_TAB_WIDTH = 2
+
+	def initialize(background: nil, color: nil, syntax_highlight: nil, context: nil, width: nil, tab_width: nil, parse_error_limit: nil, underline_highlights: true, left_label: nil, right_label: nil, display: "side-by-side-show-both")
 		@show_paths = false
 		@background = background => :dark | :light | nil
 		@color = color => :always | :never | :auto | nil
 		@syntax_highlight = syntax_highlight => :on | :off | nil
 		@context = context => Integer | nil
+		@width = width => Integer | nil
 		@tab_width = tab_width => Integer | nil
 		@parse_error_limit = parse_error_limit => Integer | nil
 		@underline_highlights = underline_highlights => true | false
 		@left_label = left_label => String | nil
 		@right_label = right_label => String | nil
+		@display = display
 	end
 
 	def diff_objects(old, new)
-		tab_width = @tab_width || 2
+		tab_width = @tab_width || DEFAULT_TAB_WIDTH
 
 		old = Difftastic.pretty(old, tab_width:)
 		new = Difftastic.pretty(new, tab_width:)
@@ -292,6 +296,8 @@ class Difftastic::Differ
 			("--background=#{@background}" if @background),
 			("--syntax-highlight=#{@syntax_highlight}" if @syntax_highlight),
 			("--tab-width=#{@tab_width}" if @tab_width),
+			("--display=#{@display}" if @display),
+			("--width=#{@width}" if @width),
 		].compact!
 
 		result = Difftastic.execute(options.join(" ")).strip
@@ -343,10 +349,15 @@ class Difftastic::Differ
 	private
 
 	def right_label_offset(line)
+		tab_width = @tab_width || DEFAULT_TAB_WIDTH
 		stripped_line = ::Difftastic::ANSI.strip_formatting(line)
-		_lhs, rhs = stripped_line.split(/\s{#{@tab_width},}/, 2)
+		_lhs, rhs = stripped_line.split(/\s{#{tab_width},}/, 2)
 
-		offset = (stripped_line.index("#{' ' * @tab_width}#{rhs}") || 0) + @tab_width
+		index = stripped_line.index("#{' ' * tab_width}#{rhs}")
+		index = @width / 2 if @width && index.nil?
+		index = 0 if index.nil?
+
+		offset = index + tab_width
 		minimum_offset = 29
 
 		[minimum_offset, offset].max

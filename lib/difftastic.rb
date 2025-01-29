@@ -11,6 +11,9 @@ module Difftastic
 	GEM_NAME = "difftastic"
 	DEFAULT_DIR = File.expand_path(File.join(__dir__, "..", "exe"))
 
+	class ExecutableNotFoundException < StandardError
+	end
+
 	def self.execute(command)
 		`#{executable} #{command}`
 	end
@@ -71,9 +74,15 @@ module Difftastic
 		exe_file
 	end
 
-	def self.pretty(object, indent: 0, tab_width: 2, max_width: 60)
+	def self.pretty(object, indent: 0, tab_width: 2, max_width: 60, max_depth: 5, max_instance_variables: 10, original_object: nil)
+		return "self" if object && object == original_object
+
+		original_object ||= object
+
 		case object
 		when Hash
+			return "{}" if object.empty?
+
 			buffer = +"{\n"
 			indent += 1
 			object.each do |key, value|
@@ -82,10 +91,10 @@ module Difftastic
 				when Symbol
 					buffer << "#{key.name}: "
 				else
-					buffer << pretty(key, indent:)
+					buffer << pretty(key, indent:, original_object:)
 					buffer << " => "
 				end
-				buffer << pretty(value, indent:)
+				buffer << pretty(value, indent:, original_object:)
 				buffer << ",\n"
 			end
 			indent -= 1
@@ -95,7 +104,7 @@ module Difftastic
 			new_lines = false
 			length = 0
 			items = object.map do |item|
-				pretty_item = pretty(item, indent: indent + 1)
+				pretty_item = pretty(item, indent: indent + 1, original_object:)
 				new_lines = true if pretty_item.include?("\n")
 				length += pretty_item.bytesize
 				pretty_item
@@ -110,7 +119,7 @@ module Difftastic
 			new_lines = false
 			length = 0
 			items = object.to_a.sort!.map do |item|
-				pretty_item = pretty(item, indent: indent + 1)
+				pretty_item = pretty(item, indent: indent + 1, original_object:)
 				new_lines = true if pretty_item.include?("\n")
 				length += pretty_item.bytesize
 				pretty_item
@@ -123,23 +132,39 @@ module Difftastic
 			end
 		when Module
 			object.name
+		when Pathname
+			%(Pathname("#{object.to_path}"))
 		when Symbol, String, Integer, Float, Regexp, Range, Rational, Complex, true, false, nil
 			object.inspect
 		else
 			buffer = +""
 			instance_variables = object.instance_variables
-			if instance_variables.length > 0
+			if instance_variables.length > 0 && indent < max_depth
 				buffer << "#{object.class.name}(\n"
 				indent += 1
-				object.instance_variables.each do |name|
+
+				if indent < max_depth
+					object.instance_variables.take(max_instance_variables).each do |name|
+						buffer << ("\t" * indent)
+						buffer << ":#{name} => "
+						buffer << pretty(object.instance_variable_get(name), indent:, original_object:)
+						buffer << ",\n"
+					end
+
+					if object.instance_variables.count > max_instance_variables
+						buffer << ("\t" * indent)
+						buffer << "...\n"
+					end
+				else
 					buffer << ("\t" * indent)
-					buffer << ":#{name} => "
-					buffer << pretty(object.instance_variable_get(name), indent:)
-					buffer << ",\n"
+					buffer << "...\n"
 				end
+
 				indent -= 1
 				buffer << ("\t" * indent)
 				buffer << ")"
+			elsif indent >= max_depth
+				buffer << "#{object.class.name}(...)"
 			else
 				buffer << "#{object.class.name}()"
 			end
