@@ -15,7 +15,7 @@ test "empty set" do
 		Set.new([1, 2, 3])
 	)
 
-	assert_equal output, %(1 Set[]                       1 Set[1, 2, 3]\n\n)
+	assert_equal output, %(1 Set[]                       1 Set[1, 2, 3])
 end
 
 test "empty array" do
@@ -42,7 +42,7 @@ test "empty symbol" do
 		:Symbol
 	)
 
-	assert_equal output, %(1 :""                         1 :Symbol\n\n)
+	assert_equal output, %(1 :""                         1 :Symbol)
 end
 
 test "html" do

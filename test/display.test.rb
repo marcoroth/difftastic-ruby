@@ -3,13 +3,13 @@
 test "default" do
 	output = Difftastic::Differ.new(color: :never).diff_objects([], [1, 2, 3])
 
-	assert_equal output, "1 []                          1 [1, 2, 3]\n\n"
+	assert_equal output, "1 []                          1 [1, 2, 3]"
 end
 
 test "side-by-side-show-both" do
 	output = Difftastic::Differ.new(color: :never, display: "side-by-side-show-both").diff_objects([], [1, 2, 3])
 
-	assert_equal output, "1 []                          1 [1, 2, 3]\n\n"
+	assert_equal output, "1 []                          1 [1, 2, 3]"
 end
 
 test "side-by-side" do
