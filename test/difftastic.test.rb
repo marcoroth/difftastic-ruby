@@ -24,16 +24,16 @@ test "empty array" do
 		[3, 2, 1]
 	)
 
-	assert_equal output, "1 []                          1 [3, 2, 1]\n\n"
+	assert_equal output, "1 []                          1 [3, 2, 1]"
 end
 
 test "empty string" do
 	output = Difftastic::Differ.new(color: :never, tab_width: 2).diff_objects(
 		"",
-		"String"
+		"String",
 	)
 
-	assert_equal output, %(1 ""                          1 "String"\n\n)
+	assert_equal output, %(1 ""                          1 "String")
 end
 
 test "empty symbol" do

@@ -1,6 +1,5 @@
-GIT
-  remote: https://github.com/joeldrapper/quickdraw.git
-  revision: a13f31e80d6814620dfe7cfa286b7b63317b1e30
+PATH
+  remote: ../quickdraw
   specs:
     quickdraw (0.1.0)
       difftastic (~> 0.1)
