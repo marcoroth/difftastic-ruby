@@ -146,7 +146,9 @@ module Difftastic
 				if indent < max_depth
 					object.instance_variables.take(max_instance_variables).each do |name|
 						buffer << ("\t" * indent)
-						buffer << ":#{name} => "
+						buffer << name.name
+						buffer << " = "
+
 						buffer << pretty(object.instance_variable_get(name), indent:, original_object:)
 						buffer << ",\n"
 					end

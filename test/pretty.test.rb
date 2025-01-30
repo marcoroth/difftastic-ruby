@@ -3,8 +3,8 @@
 test "objects" do
 	assert_equal_ruby Difftastic.pretty(Example.new), <<~RUBY.chomp
 		Example(
-			:@foo => 1,
-			:@bar => [2, 3, 4],
+			@foo = 1,
+			@bar = [2, 3, 4],
 		)
 	RUBY
 end
@@ -262,16 +262,16 @@ test "max_instance_variables" do
 
 	assert_equal_ruby Difftastic.pretty(object), <<~RUBY.chomp
 		Object(
-			:@variable_1 => 1,
-			:@variable_2 => 2,
-			:@variable_3 => 3,
-			:@variable_4 => 4,
-			:@variable_5 => 5,
-			:@variable_6 => 6,
-			:@variable_7 => 7,
-			:@variable_8 => 8,
-			:@variable_9 => 9,
-			:@variable_10 => 10,
+			@variable_1 = 1,
+			@variable_2 = 2,
+			@variable_3 = 3,
+			@variable_4 = 4,
+			@variable_5 = 5,
+			@variable_6 = 6,
+			@variable_7 = 7,
+			@variable_8 = 8,
+			@variable_9 = 9,
+			@variable_10 = 10,
 			...
 		)
 	RUBY
@@ -296,10 +296,10 @@ test "max_depth" do
 
 	assert_equal_ruby Difftastic.pretty(object, max_width: 300), <<~RUBY.chomp
 		MaxDepth(
-			:@value => [
+			@value = [
 				"object",
 				MaxDepth(
-					:@value => [
+					@value = [
 						"level1",
 						MaxDepth(
 							...
