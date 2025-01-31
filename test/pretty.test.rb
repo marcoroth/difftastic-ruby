@@ -35,6 +35,10 @@ test "empty symbol" do
 	assert_equal_ruby Difftastic.pretty(:""), %(:"")
 end
 
+test "time" do
+	assert_equal_ruby Difftastic.pretty(Time.at(1738319106)), %(Time("2025-01-31 11:25:06 +0100"))
+end
+
 test "sets are sorted" do
 	object = Set[2, 3, 1]
 
