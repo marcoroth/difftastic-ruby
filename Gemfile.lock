@@ -9,6 +9,7 @@ PATH
   remote: .
   specs:
     difftastic (0.4.0)
+      sumi
 
 GEM
   remote: https://rubygems.org/
@@ -49,6 +50,7 @@ GEM
     ruby-progressbar (1.13.0)
     rubyzip (2.4.1)
     sorbet-runtime (0.5.11766)
+    sumi (0.1.0)
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
