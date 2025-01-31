@@ -115,6 +115,10 @@ test "date" do
 	assert_equal_ruby Difftastic.pretty(Date.parse("2015-01-31")), %(Date("2015-01-31"))
 end
 
+test "date time" do
+	assert_equal_ruby Difftastic.pretty(DateTime.parse("2025-01-31 11:17:18 +0100")), %(DateTime("2025-01-31T11:17:18+01:00"))
+end
+
 test "sets are sorted" do
 	object = Set[2, 3, 1]
 

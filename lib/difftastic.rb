@@ -132,10 +132,8 @@ module Difftastic
 			object.name
 		when Pathname
 			%(Pathname("#{object.to_path}"))
-		when Time
-			%(Time("#{object.to_s}"))
-		when Date
-			%(Date("#{object.to_s}"))
+		when Date, DateTime, Time
+			%(#{object.class.name}("#{object.to_s}"))
 		when Symbol, String, Integer, Float, Regexp, Range, Rational, Complex, true, false, nil
 			object.inspect
 		when Data
