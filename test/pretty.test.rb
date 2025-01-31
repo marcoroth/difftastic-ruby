@@ -24,8 +24,8 @@ test "data objects" do
 
 	assert_equal_ruby Difftastic.pretty(measure.new(100, "km")), <<~RUBY.chomp
 		Measure(
-			amount = 100,
-			unit = "km",
+			amount: 100,
+			unit: "km",
 		)
 	RUBY
 end
