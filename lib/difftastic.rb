@@ -134,42 +134,57 @@ module Difftastic
 			%(Pathname("#{object.to_path}"))
 		when Time
 			%(Time("#{object.to_s}"))
+		when Date
+			%(Date("#{object.to_s}"))
 		when Symbol, String, Integer, Float, Regexp, Range, Rational, Complex, true, false, nil
 			object.inspect
+		when Data
+			buffer = +""
+			members = object.members.take(max_instance_variables) # TODO: either rename max_instance_variables to max_properties or define a max_members specifcally for data objects
+			total_count = object.members.length
+			items = members.map { |key| [key, object.__send__(key)] }
+
+			pretty_print_object(object:, original_object:, buffer:, items:, total_count:, indent:, max_depth:, max_instance_variables:, separator: ": ")
 		else
 			buffer = +""
-			instance_variables = object.instance_variables
-			if instance_variables.length > 0 && indent < max_depth
-				buffer << "#{object.class.name}(\n"
-				indent += 1
+			instance_variables = object.instance_variables.take(max_instance_variables)
+			total_count = object.instance_variables.length
+			items = instance_variables.map { |name| [name, object.instance_variable_get(name)] }
 
-				if indent < max_depth
-					object.instance_variables.take(max_instance_variables).each do |name|
-						buffer << ("\t" * indent)
-						buffer << name.name
-						buffer << " = "
+			pretty_print_object(object:, original_object:, buffer:, items:, total_count:, indent:, max_depth:, max_instance_variables:, separator: " = ")
+		end
+	end
 
-						buffer << pretty(object.instance_variable_get(name), indent:, original_object:)
-						buffer << ",\n"
-					end
+	def self.pretty_print_object(object:, original_object:, buffer:, items:, total_count:, indent:, max_depth:, max_instance_variables:, separator:)
+		if total_count > 0 && indent < max_depth
+			buffer << "#{object.class.name}(\n"
+			indent += 1
 
-					if object.instance_variables.count > max_instance_variables
-						buffer << ("\t" * indent)
-						buffer << "...\n"
-					end
-				else
+			if indent < max_depth
+				items.take(max_instance_variables).each do |key, value|
+					buffer << ("\t" * indent)
+					buffer << "#{key}#{separator}"
+
+					buffer << pretty(value, indent:, original_object:)
+					buffer << ",\n"
+				end
+
+				if total_count > max_instance_variables
 					buffer << ("\t" * indent)
 					buffer << "...\n"
 				end
-
-				indent -= 1
-				buffer << ("\t" * indent)
-				buffer << ")"
-			elsif indent >= max_depth
-				buffer << "#{object.class.name}(...)"
 			else
-				buffer << "#{object.class.name}()"
+				buffer << ("\t" * indent)
+				buffer << "...\n"
 			end
+
+			indent -= 1
+			buffer << ("\t" * indent)
+			buffer << ")"
+		elsif indent >= max_depth
+			buffer << "#{object.class.name}(...)"
+		else
+			buffer << "#{object.class.name}()"
 		end
 	end
 end

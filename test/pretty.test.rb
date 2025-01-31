@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "date"
+
 test "objects" do
 	assert_equal_ruby Difftastic.pretty(Example.new), <<~RUBY.chomp
 		Example(
@@ -10,9 +12,32 @@ test "objects" do
 end
 
 test "object with no properties" do
-	assert_equal_ruby Difftastic.pretty(Object.new), <<~RUBY.chomp
-		Object()
+	assert_equal_ruby Difftastic.pretty(Object.new), %(Object())
+end
+
+test "data objects" do
+	measure = Data.define(:amount, :unit) do
+		def self.name
+			"Measure"
+		end
+	end
+
+	assert_equal_ruby Difftastic.pretty(measure.new(100, "km")), <<~RUBY.chomp
+		Measure(
+			amount: 100,
+			unit: "km",
+		)
 	RUBY
+end
+
+test "data objects with no properties" do
+	empty = Data.define do
+		def self.name
+			"Empty"
+		end
+	end
+
+	assert_equal_ruby Difftastic.pretty(empty.new), %(Empty())
 end
 
 test "empty set" do
@@ -37,6 +62,57 @@ end
 
 test "time" do
 	assert_equal_ruby Difftastic.pretty(Time.at(1738319106)), %(Time("2025-01-31 11:25:06 +0100"))
+end
+
+test "integer" do
+	assert_equal_ruby Difftastic.pretty(-1), %(-1)
+	assert_equal_ruby Difftastic.pretty(0), %(0)
+	assert_equal_ruby Difftastic.pretty(3), %(3)
+end
+
+test "float" do
+	assert_equal_ruby Difftastic.pretty(3.1415), %(3.1415)
+end
+
+test "regexp" do
+	assert_equal_ruby Difftastic.pretty(/\d{2}/), %(/\\d{2}/)
+end
+
+test "range" do
+	assert_equal_ruby Difftastic.pretty(1..10), %(1..10)
+	assert_equal_ruby Difftastic.pretty(1...10), %(1...10)
+end
+
+test "rational" do
+	assert_equal_ruby Difftastic.pretty(Rational(1)), %((1/1))
+	assert_equal_ruby Difftastic.pretty(Rational(2, 3)), %((2/3))
+	assert_equal_ruby Difftastic.pretty(Rational(4, -6)), %((-2/3))
+	assert_equal_ruby Difftastic.pretty(3.to_r), %((3/1))
+	assert_equal_ruby Difftastic.pretty(2/3r), %((2/3))
+end
+
+test "complex" do
+	assert_equal_ruby Difftastic.pretty(2+1i), %((2+1i))
+	assert_equal_ruby Difftastic.pretty(Complex(1)), %((1+0i))
+	assert_equal_ruby Difftastic.pretty(Complex(2, 3)), %((2+3i))
+	assert_equal_ruby Difftastic.pretty(Complex.polar(2, 3)), %((-1.9799849932008908+0.2822400161197344i))
+	assert_equal_ruby Difftastic.pretty(3.to_c), %((3+0i))
+end
+
+test "true" do
+	assert_equal_ruby Difftastic.pretty(true), %(true)
+end
+
+test "false" do
+	assert_equal_ruby Difftastic.pretty(false), %(false)
+end
+
+test "nil" do
+	assert_equal_ruby Difftastic.pretty(nil), %(nil)
+end
+
+test "date" do
+	assert_equal_ruby Difftastic.pretty(Date.parse("2015-01-31")), %(Date("2015-01-31"))
 end
 
 test "sets are sorted" do
@@ -221,7 +297,7 @@ test "self-referencing" do
 
 	parent = {
 		object:,
-		self_twice: [object, object]
+		self_twice: [object, object],
 	}
 
 	object[:parent] = parent
