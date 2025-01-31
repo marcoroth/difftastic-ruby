@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "date"
+
 test "objects" do
 	assert_equal_ruby Difftastic.pretty(Example.new), <<~RUBY.chomp
 		Example(
@@ -103,6 +105,10 @@ end
 
 test "nil" do
 	assert_equal_ruby Difftastic.pretty(nil), %(nil)
+end
+
+test "date" do
+	assert_equal_ruby Difftastic.pretty(Date.parse("2015-01-31")), %(Date("2015-01-31"))
 end
 
 test "sets are sorted" do
