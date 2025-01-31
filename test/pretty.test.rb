@@ -15,6 +15,31 @@ test "object with no properties" do
 	RUBY
 end
 
+test "data objects" do
+	measure = Data.define(:amount, :unit) do
+		def self.name
+			"Measure"
+		end
+	end
+
+	assert_equal_ruby Difftastic.pretty(measure.new(100, "km")), <<~RUBY.chomp
+		Measure(
+			amount = 100,
+			unit = "km",
+		)
+	RUBY
+end
+
+test "data objects with no properties" do
+	empty = Data.define do
+		def self.name
+			"Empty"
+		end
+	end
+
+	assert_equal_ruby Difftastic.pretty(empty.new), %(Empty())
+end
+
 test "empty set" do
 	assert_equal_ruby Difftastic.pretty(Set.new), "Set[]"
 end
@@ -217,7 +242,7 @@ test "self-referencing" do
 
 	parent = {
 		object:,
-		self_twice: [object, object]
+		self_twice: [object, object],
 	}
 
 	object[:parent] = parent
