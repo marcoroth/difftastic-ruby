@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'shellwords'
+
 class Difftastic::Differ
 	DEFAULT_TAB_WIDTH = 2
 
@@ -272,25 +274,38 @@ class Difftastic::Differ
 	end
 
 	def diff_strings(old, new, file_extension: nil)
-		old_file = Tempfile.new(["old", ".#{file_extension}"])
-		new_file = Tempfile.new(["new", ".#{file_extension}"])
 
-		old_file.write(old)
-		new_file.write(new)
 
-		old_file.close
-		new_file.close
+		# old_file = Tempfile.new(["old", ".#{file_extension}"])
+		# new_file = Tempfile.new(["new", ".#{file_extension}"])
+		#
+		# old_file.write(old)
+		# new_file.write(new)
+		#
+		# old_file.close
+		# new_file.close
 
-		diff_files(old_file, new_file)
+		diff_files(old, new)
 	ensure
-		old_file.unlink
-		new_file.unlink
+		# old_file.unlink
+		# new_file.unlink
 	end
 
 	def diff_files(old_file, new_file)
+		escaped_old = `printf %q #{old_file.shellescape}`.chomp
+	  escaped_new = `printf %q #{new_file.shellescape}`.chomp
+
 		options = [
-			(old_file.path),
-			(new_file.path),
+			%(<(echo "#{old_file.shellescape}")),
+			%(<(echo "#{new_file.shellescape}")),
+			# %(<(printf %s #{old_file.shellescape})),
+			# %(<(printf %s #{new_file.shellescape})),
+			# %(<(echo #{escaped_old})),
+			# %(<(echo #{escaped_new})),
+			# %(<(printf %s #{escaped_old})),
+			# %(<(printf %s #{escaped_new})),
+			# %(<(printf %s "#{escaped_old}")),
+	    # %(<(printf %s "#{escaped_new}")),
 			("--color=#{@color}" if @color),
 			("--context=#{@context}" if @context),
 			("--background=#{@background}" if @background),
@@ -302,10 +317,14 @@ class Difftastic::Differ
 
 		result = Difftastic.execute(options.join(" ")).lstrip.sub(/\n{2}\z/, "")
 
-		unless @show_paths
-			new_line_index = result.index("\n") + 1
-			result = result.byteslice(new_line_index, result.bytesize - new_line_index)
-		end
+		puts options.join(" ")
+
+		# binding.irb
+
+		# unless @show_paths
+		# 	new_line_index = result.index("\n") + 1
+		# 	result = result.byteslice(new_line_index, result.bytesize - new_line_index)
+		# end
 
 		if @left_label || @right_label
 			# Get the first content line to calculate offset
