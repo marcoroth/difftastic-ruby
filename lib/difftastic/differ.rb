@@ -289,8 +289,8 @@ class Difftastic::Differ
 
 	def diff_files(old_file, new_file)
 		options = [
-			(old_file.path),
-			(new_file.path),
+			(file_to_path(old_file)),
+			(file_to_path(new_file)),
 			("--color=#{@color}" if @color),
 			("--context=#{@context}" if @context),
 			("--background=#{@background}" if @background),
@@ -303,7 +303,7 @@ class Difftastic::Differ
 		result = Difftastic.execute(options.join(" ")).lstrip.sub(/\n{2}\z/, "")
 
 		unless @show_paths
-			new_line_index = result.index("\n") + 1
+			new_line_index = (result.index("\n") || 0) + 1
 			result = result.byteslice(new_line_index, result.bytesize - new_line_index)
 		end
 
@@ -361,5 +361,14 @@ class Difftastic::Differ
 		minimum_offset = 29
 
 		[minimum_offset, offset].max
+	end
+
+	def file_to_path(file)
+		return file if file.is_a?(String)
+		return file.path if file.is_a?(File)
+		return file.path if file.is_a?(Tempfile)
+		return file.to_s if file.is_a?(Pathname) # just to be explicit
+
+		file.to_s
 	end
 end
