@@ -9,7 +9,7 @@ class DifftasticTest < Minitest::Spec
 			[3, 2, 1]
 		)
 
-		assert_equal "\e[91;1m1 \e[0m[\e[91m1\e[0m, 2, \e[91m3\e[0m]                   \e[92;1m1 \e[0m[\e[92m3\e[0m, 2, \e[92m1\e[0m]", output
+		assert_equal "\e[91;1m1 \e[0m[\e[91m1\e[0m, 2, \e[91m3\e[0m]                 \e[92;1m1 \e[0m[\e[92m3\e[0m, 2, \e[92m1\e[0m]", output
 	end
 
 	it "empty set" do
@@ -18,7 +18,7 @@ class DifftasticTest < Minitest::Spec
 			Set.new([1, 2, 3])
 		)
 
-		assert_equal %(1 Set[]                       1 Set[1, 2, 3]), output
+		assert_equal %(1 Set[]                     1 Set[1, 2, 3]), output
 	end
 
 	it "empty array" do
@@ -27,7 +27,7 @@ class DifftasticTest < Minitest::Spec
 			[3, 2, 1]
 		)
 
-		assert_equal "1 []                          1 [3, 2, 1]", output
+		assert_equal "1 []                        1 [3, 2, 1]", output
 	end
 
 	it "empty string" do
@@ -36,7 +36,7 @@ class DifftasticTest < Minitest::Spec
 			"String",
 		)
 
-		assert_equal %(1 ""                          1 "String"), output
+		assert_equal %(1 ""                        1 "String"), output
 	end
 
 	it "empty symbol" do
@@ -45,7 +45,7 @@ class DifftasticTest < Minitest::Spec
 			:Symbol
 		)
 
-		assert_equal %(1 :""                         1 :Symbol), output
+		assert_equal %(1 :""                       1 :Symbol), output
 	end
 
 	it "html" do
@@ -54,6 +54,6 @@ class DifftasticTest < Minitest::Spec
 
 		output = Difftastic::Differ.new(color: :always, tab_width: 2).diff_html(a, b)
 
-		assert_equal "\e[2m1 \e[0m<\e[1mhtml\e[0m>                       \e[2m1 \e[0m<\e[1mhtml\e[0m>\n\e[2m2 \e[0m  <\e[1mbody\e[0m>                     \e[2m2 \e[0m  <\e[1mbody\e[0m>\n\e[91;1m3 \e[0m    <\e[1mh1\e[0m>\e[91;1;4mHello\e[0m\e[91m,\e[0m\e[91m \e[0m\e[91mworld\e[0m\e[91m!\e[0m</\e[1mh1\e[0m>   \e[92;1m3 \e[0m    <\e[1mh1\e[0m>\e[92;1;4mGoodbye\e[0m\e[92m,\e[0m\e[92m \e[0m\e[92mworld\e[0m\e[92m!\e[0m</\e[1mh1\e[0m>\n\e[2m4 \e[0m  </\e[1mbody\e[0m>                    \e[2m4 \e[0m  </\e[1mbody\e[0m>\n\e[2m5 \e[0m</\e[1mhtml\e[0m>                      \e[2m5 \e[0m</\e[1mhtml\e[0m>", output
+		assert_equal "\e[2m1 \e[0m<\e[1mhtml\e[0m>                     \e[2m1 \e[0m<\e[1mhtml\e[0m>\n\e[2m2 \e[0m  <\e[1mbody\e[0m>                   \e[2m2 \e[0m  <\e[1mbody\e[0m>\n\e[91;1m3 \e[0m    <\e[1mh1\e[0m>\e[91;1;4mHello\e[0m\e[91m, world!\e[0m</\e[1mh1\e[0m> \e[92;1m3 \e[0m    <\e[1mh1\e[0m>\e[92;1;4mGoodbye\e[0m\e[92m, world!\e[0m</\e[1mh\e[0m\n\e[91;1m\e[2m. \e[0m\e[0m                           \e[92;1m\e[2m. \e[0m\e[0m\e[1m1\e[0m>\n\e[2m4 \e[0m  </\e[1mbody\e[0m>                  \e[2m4 \e[0m  </\e[1mbody\e[0m>\n\e[2m5 \e[0m</\e[1mhtml\e[0m>                    \e[2m5 \e[0m</\e[1mhtml\e[0m>", output
 	end
 end

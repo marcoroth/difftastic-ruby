@@ -2,7 +2,7 @@
 
 module Difftastic
 	module Upstream
-		VERSION = "0.62.0"
+		VERSION = "0.67.0"
 
 		NATIVE_PLATFORMS = {
 			"arm64-darwin" => "difft-aarch64-apple-darwin.tar.gz",

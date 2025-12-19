@@ -21,7 +21,7 @@ class DiffFilesTest < Minitest::Spec
 		output = differ.diff_files(a_path, b_path)
 
 		begin
-			assert_equal "1 A                           1 B", output
+			assert_equal "1 A                         1 B", output
 		ensure
 			FileUtils.rm(a_path)
 			FileUtils.rm(b_path)
@@ -42,7 +42,7 @@ class DiffFilesTest < Minitest::Spec
 		output = differ.diff_files(a, b)
 
 		begin
-			assert_equal "1 A                           1 B", output
+			assert_equal "1 A                         1 B", output
 		ensure
 			FileUtils.rm(a_path)
 			FileUtils.rm(b_path)
@@ -66,7 +66,7 @@ class DiffFilesTest < Minitest::Spec
 		output = differ.diff_files(a, b)
 
 		begin
-			assert_equal "1 A                           1 B", output
+			assert_equal "1 A                         1 B", output
 		ensure
 			a.close
 			b.close
@@ -90,7 +90,7 @@ class DiffFilesTest < Minitest::Spec
 		output = differ.diff_files(a, b)
 
 		begin
-			assert_equal "1 A                           1 B", output
+			assert_equal "1 A                         1 B", output
 		ensure
 			a.unlink
 			b.unlink
