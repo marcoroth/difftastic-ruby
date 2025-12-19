@@ -25,4 +25,4 @@ jobs:
           bundler-cache: true
 
       - name: Run tests
-        run: bundle exec qt
+        run: bundle exec rake test
