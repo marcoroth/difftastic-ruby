@@ -18,6 +18,6 @@ class WidthTest < Minitest::Spec
 	it "no width" do
 		output = Difftastic::Differ.new(color: :never).diff_strings("123 456", "123 456 789")
 
-		assert_equal "1 123 456                     1 123 456 789", output
+		assert_equal "1 123 456                   1 123 456 789", output
 	end
 end
