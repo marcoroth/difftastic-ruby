@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "difftastic"
+
+long_text_old = "This is a very long line of text that demonstrates how difftastic handles wide content"
+long_text_new = "This is a very long line of text that shows how difftastic displays wide differences"
+
+puts "=== Default width ==="
+differ = Difftastic::Differ.new(color: :always)
+puts differ.diff_strings(long_text_old, long_text_new)
+puts
+
+puts "=== Width: 80 ==="
+differ = Difftastic::Differ.new(color: :always, width: 80)
+puts differ.diff_strings(long_text_old, long_text_new)
+puts
+
+puts "=== Width: 120 ==="
+differ = Difftastic::Differ.new(color: :always, width: 120)
+puts differ.diff_strings(long_text_old, long_text_new)

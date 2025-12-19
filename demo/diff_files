@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "difftastic"
+require "tempfile"
+
+file_a = Tempfile.new(["old", ".rb"])
+file_b = Tempfile.new(["new", ".rb"])
+
+file_a.write(<<~RUBY)
+  def greet(name)
+    puts "Hello, \#{name}!"
+  end
+
+  greet("World")
+RUBY
+file_a.rewind
+
+file_b.write(<<~RUBY)
+  def greet(name, greeting: "Hello")
+    puts "\#{greeting}, \#{name}!"
+  end
+
+  greet("World", greeting: "Hi")
+RUBY
+file_b.rewind
+
+differ = Difftastic::Differ.new(color: :always)
+
+puts "Diffing two Ruby files:"
+puts differ.diff_files(file_a, file_b)
+
+file_a.unlink
+file_b.unlink

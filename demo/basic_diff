@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "difftastic"
+
+differ = Difftastic::Differ.new(color: :always)
+
+puts "Diffing two arrays:"
+puts differ.diff_objects([1, 2, 3], [3, 2, 1])
+puts
+
+puts "Diffing two hashes:"
+puts differ.diff_objects(
+  { name: "Alice", age: 30 },
+  { name: "Bob", age: 25 }
+)
+puts
+
+puts "Diffing two strings:"
+puts differ.diff_strings("Hello, World!", "Hello, Ruby!")

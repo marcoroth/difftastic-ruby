@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "difftastic"
+
+differ = Difftastic::Differ.new(color: :always, tab_width: 2)
+
+html_old = <<~HTML
+  <html>
+    <body>
+      <h1>Hello, World!</h1>
+      <p>Welcome to our site.</p>
+    </body>
+  </html>
+HTML
+
+html_new = <<~HTML
+  <html>
+    <body>
+      <h1>Welcome!</h1>
+      <p>Thanks for visiting our site.</p>
+      <footer>Copyright 2024</footer>
+    </body>
+  </html>
+HTML
+
+puts "Diffing HTML:"
+puts differ.diff_html(html_old, html_new)

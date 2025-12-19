@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "difftastic"
+
+old_data = { users: [1, 2, 3], active: true }
+new_data = { users: [1, 2, 3, 4], active: false }
+
+puts "=== Side-by-side (default) ==="
+differ = Difftastic::Differ.new(color: :always, display: "side-by-side-show-both")
+puts differ.diff_objects(old_data, new_data)
+puts
+
+puts "=== Inline ==="
+differ = Difftastic::Differ.new(color: :always, display: "inline")
+puts differ.diff_objects(old_data, new_data)
