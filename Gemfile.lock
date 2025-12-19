@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    difftastic (0.7.1)
+    difftastic (0.8.0)
       pretty_please
 
 GEM
