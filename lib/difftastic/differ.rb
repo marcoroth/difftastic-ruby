@@ -346,9 +346,7 @@ class Difftastic::Differ
 		result
 	end
 
-	private
-
-	def right_label_offset(line)
+	private def right_label_offset(line)
 		tab_width = @tab_width || DEFAULT_TAB_WIDTH
 		stripped_line = ::Difftastic::ANSI.strip_formatting(line)
 		_lhs, rhs = stripped_line.split(/\s{#{tab_width},}/, 2)
@@ -363,7 +361,7 @@ class Difftastic::Differ
 		[minimum_offset, offset].max
 	end
 
-	def file_to_path(file)
+	private def file_to_path(file)
 		return file if file.is_a?(String)
 		return file.path if file.is_a?(File)
 		return file.path if file.is_a?(Tempfile)
