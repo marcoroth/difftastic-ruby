@@ -5,13 +5,13 @@ require "bundler/setup"
 require "difftastic"
 
 differ = Difftastic::Differ.new(
-  color: :always,
-  left_label: "Expected",
-  right_label: "Actual"
+	color: :always,
+	left_label: "Expected",
+	right_label: "Actual"
 )
 
 puts "Diff with labels:"
 puts differ.diff_objects(
-  { status: "pending", count: 5 },
-  { status: "completed", count: 10 }
+	{ status: "pending", count: 5 },
+	{ status: "completed", count: 10 }
 )
