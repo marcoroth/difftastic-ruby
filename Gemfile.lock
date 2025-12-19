@@ -17,7 +17,6 @@ GEM
     maxitest (6.1.0)
       minitest (>= 5.20.0, < 5.28.0)
     minitest (5.27.0)
-    openssl (4.0.0)
     parallel (1.27.0)
     parser (3.3.10.0)
       ast (~> 2.4.1)
@@ -72,7 +71,6 @@ PLATFORMS
 DEPENDENCIES
   difftastic!
   maxitest
-  openssl (~> 4.0)
   rake
   rubocop
   ruby-lsp
