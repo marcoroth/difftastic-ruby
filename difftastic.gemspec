@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 	spec.summary = "Integrate Difftastic with the RubyGems infrastructure."
 	spec.homepage = "https://github.com/joeldrapper/difftastic-ruby"
 	spec.license = "MIT"
-	spec.required_ruby_version = ">= 3.1.0"
+	spec.required_ruby_version = ">= 3.2.0"
 
 	spec.metadata = {
 		"homepage_uri" => spec.homepage,
