@@ -15,6 +15,12 @@ module Difftastic
 	class ExecutableNotFoundException < StandardError
 	end
 
+	class DirectoryNotFoundException < StandardError
+	end
+
+	class UnsupportedPlatformException < StandardError
+	end
+
 	def self.execute(command)
 		`#{executable} #{command}`
 	end
