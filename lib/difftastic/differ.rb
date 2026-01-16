@@ -2,8 +2,12 @@
 
 class Difftastic::Differ
 	DEFAULT_TAB_WIDTH = 2
+	DEFAULT_MAX_DEPTH = 5
+	DEFAULT_MAX_ITEMS = 10
+	DEFAULT_MAX_DEPTH_CAP = 50
+	DEFAULT_MAX_ITEMS_CAP = 100
 
-	def initialize(background: nil, color: nil, syntax_highlight: nil, context: nil, width: nil, tab_width: nil, parse_error_limit: nil, underline_highlights: true, left_label: nil, right_label: nil, display: "side-by-side-show-both")
+	def initialize(background: nil, color: nil, syntax_highlight: nil, context: nil, width: nil, tab_width: nil, parse_error_limit: nil, underline_highlights: true, left_label: nil, right_label: nil, display: "side-by-side-show-both", max_depth: nil, max_items: nil, max_depth_cap: nil, max_items_cap: nil)
 		@show_paths = false
 		@background = background => :dark | :light | nil
 		@color = color => :always | :never | :auto | nil
@@ -16,15 +20,37 @@ class Difftastic::Differ
 		@left_label = left_label => String | nil
 		@right_label = right_label => String | nil
 		@display = display
+		@max_depth = max_depth => Integer | nil
+		@max_items = max_items => Integer | nil
+		@max_depth_cap = max_depth_cap => Integer | nil
+		@max_items_cap = max_items_cap => Integer | nil
 	end
 
 	def diff_objects(old, new)
 		tab_width = @tab_width || DEFAULT_TAB_WIDTH
+		max_depth = @max_depth || DEFAULT_MAX_DEPTH
+		max_items = @max_items || DEFAULT_MAX_ITEMS
+		max_depth_cap = @max_depth_cap || DEFAULT_MAX_DEPTH_CAP
+		max_items_cap = @max_items_cap || DEFAULT_MAX_ITEMS_CAP
 
-		old = Difftastic.pretty(old, tab_width:)
-		new = Difftastic.pretty(new, tab_width:)
+		loop do
+			old_str = Difftastic.pretty(old, tab_width:, max_depth:, max_items:)
+			new_str = Difftastic.pretty(new, tab_width:, max_depth:, max_items:)
 
-		diff_strings(old, new, file_extension: "rb")
+			# If prettified strings differ, we have enough depth/items to show the difference
+			if old_str != new_str
+				return diff_strings(old_str, new_str, file_extension: "rb")
+			end
+
+			# If we've hit both caps, stop trying
+			if max_depth >= max_depth_cap && max_items >= max_items_cap
+				return diff_strings(old_str, new_str, file_extension: "rb")
+			end
+
+			# Increase limits and retry
+			max_depth = [max_depth + 5, max_depth_cap].min
+			max_items = [max_items + 10, max_items_cap].min
+		end
 	end
 
 	def diff_ada(old, new)
