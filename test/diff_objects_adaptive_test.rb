@@ -158,7 +158,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 	end
 
 	describe "loop termination at caps" do
-		it "terminates with 'No changes' when depth exceeds max_depth_cap" do
+		it "returns unavailable message when depth exceeds max_depth_cap" do
 			cap = TEST_MAX_DEPTH + 2
 			depth = cap + 1
 			old = nested_hash(depth, "old")
@@ -166,10 +166,10 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 			output = differ(max_depth_cap: cap).diff_objects(old, new)
 
-			assert_includes output, "No changes", "Loop should terminate at cap and return 'No changes'"
+			assert_includes output, Difftastic::Differ::DIFF_UNAVAILABLE_MESSAGE
 		end
 
-		it "terminates with 'No changes' when position exceeds max_items_cap" do
+		it "returns unavailable message when position exceeds max_items_cap" do
 			cap = TEST_MAX_ITEMS + 5
 			position = cap + 1
 			old = array_with_diff_at(position, "old")
@@ -177,7 +177,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 			output = differ(max_items_cap: cap).diff_objects(old, new)
 
-			assert_includes output, "No changes", "Loop should terminate at cap and return 'No changes'"
+			assert_includes output, Difftastic::Differ::DIFF_UNAVAILABLE_MESSAGE
 		end
 	end
 end

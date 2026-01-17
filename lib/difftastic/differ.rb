@@ -8,6 +8,7 @@ class Difftastic::Differ
 	DEFAULT_MAX_ITEMS_CAP = 40
 	MAX_DEPTH_INCREMENT = 5
 	MAX_ITEMS_INCREMENT = 10
+	DIFF_UNAVAILABLE_MESSAGE = "[Diff unavailable: exceeded depth/size display limits]"
 
 	def initialize(background: nil, color: nil, syntax_highlight: nil, context: nil, width: nil, tab_width: nil, parse_error_limit: nil, underline_highlights: true, left_label: nil, right_label: nil, display: "side-by-side-show-both", max_depth: nil, max_items: nil, max_depth_cap: nil, max_items_cap: nil)
 		@show_paths = false
@@ -49,7 +50,7 @@ class Difftastic::Differ
 
 			# If we've hit both caps, stop trying
 			if max_depth >= max_depth_cap && max_items >= max_items_cap
-				return diff_strings(old_str, new_str, file_extension: "rb")
+				return DIFF_UNAVAILABLE_MESSAGE
 			end
 
 			# Increase limits and retry, while never increasing to more than max_depth_cap/max_items_cap
