@@ -4,8 +4,10 @@ class Difftastic::Differ
 	DEFAULT_TAB_WIDTH = 2
 	DEFAULT_MAX_DEPTH = 5
 	DEFAULT_MAX_ITEMS = 10
-	DEFAULT_MAX_DEPTH_CAP = 50
-	DEFAULT_MAX_ITEMS_CAP = 100
+	DEFAULT_MAX_DEPTH_CAP = 20
+	DEFAULT_MAX_ITEMS_CAP = 40
+	MAX_DEPTH_INCREMENT = 5
+	MAX_ITEMS_INCREMENT = 10
 
 	def initialize(background: nil, color: nil, syntax_highlight: nil, context: nil, width: nil, tab_width: nil, parse_error_limit: nil, underline_highlights: true, left_label: nil, right_label: nil, display: "side-by-side-show-both", max_depth: nil, max_items: nil, max_depth_cap: nil, max_items_cap: nil)
 		@show_paths = false
@@ -37,7 +39,10 @@ class Difftastic::Differ
 			old_str = Difftastic.pretty(old, tab_width:, max_depth:, max_items:)
 			new_str = Difftastic.pretty(new, tab_width:, max_depth:, max_items:)
 
-			# If prettified strings differ, we have enough depth/items to show the difference
+			# If prettified strings don't differ, the strings probably where truncated to max_depth and/or max_items
+			# PrettyPlease then correctly did not return un-matching strings
+			# In that case we increase max_depth & max_items in the loop
+			# until DEFAULT_MAX_ITEMS_CAP or DEFAULT_MAX_DEPTH_CAP is exceeded
 			if old_str != new_str
 				return diff_strings(old_str, new_str, file_extension: "rb")
 			end
@@ -47,9 +52,10 @@ class Difftastic::Differ
 				return diff_strings(old_str, new_str, file_extension: "rb")
 			end
 
-			# Increase limits and retry
-			max_depth = [max_depth + 5, max_depth_cap].min
-			max_items = [max_items + 10, max_items_cap].min
+			# Increase limits and retry, while never increasing to more than max_depth_cap/max_items_cap
+			# Both values are matched to perform 3 retries, but neither value would increase to more than its max anyways
+			max_depth = [max_depth + MAX_DEPTH_INCREMENT, max_depth_cap].min
+			max_items = [max_items + MAX_ITEMS_INCREMENT, max_items_cap].min
 		end
 	end
 
