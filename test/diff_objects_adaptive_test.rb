@@ -7,12 +7,15 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 	# The adaptive logic works the same regardless of the actual values.
 	TEST_MAX_DEPTH = 3
 	TEST_MAX_ITEMS = 5
+	TEST_INCREMENT = 1
 
 	def differ(**options)
 		Difftastic::Differ.new(
 			color: :never,
 			max_depth: TEST_MAX_DEPTH,
 			max_items: TEST_MAX_ITEMS,
+			max_depth_increment: TEST_INCREMENT,
+			max_items_increment: TEST_INCREMENT,
 			**options # overrides defaults when provided
 		)
 	end

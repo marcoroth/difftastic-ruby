@@ -10,7 +10,7 @@ class Difftastic::Differ
 	MAX_ITEMS_INCREMENT = 10
 	DIFF_UNAVAILABLE_MESSAGE = "[Diff unavailable: exceeded depth/size display limits]"
 
-	def initialize(background: nil, color: nil, syntax_highlight: nil, context: nil, width: nil, tab_width: nil, parse_error_limit: nil, underline_highlights: true, left_label: nil, right_label: nil, display: "side-by-side-show-both", max_depth: nil, max_items: nil, max_depth_cap: nil, max_items_cap: nil)
+	def initialize(background: nil, color: nil, syntax_highlight: nil, context: nil, width: nil, tab_width: nil, parse_error_limit: nil, underline_highlights: true, left_label: nil, right_label: nil, display: "side-by-side-show-both", max_depth: nil, max_items: nil, max_depth_cap: nil, max_items_cap: nil, max_depth_increment: nil, max_items_increment: nil)
 		@show_paths = false
 		@background = background => :dark | :light | nil
 		@color = color => :always | :never | :auto | nil
@@ -27,6 +27,8 @@ class Difftastic::Differ
 		@max_items = max_items => Integer | nil
 		@max_depth_cap = max_depth_cap => Integer | nil
 		@max_items_cap = max_items_cap => Integer | nil
+		@max_depth_increment = max_depth_increment => Integer | nil
+		@max_items_increment = max_items_increment => Integer | nil
 	end
 
 	def diff_objects(old, new)
@@ -35,13 +37,15 @@ class Difftastic::Differ
 		max_items = @max_items || DEFAULT_MAX_ITEMS
 		max_depth_cap = @max_depth_cap || DEFAULT_MAX_DEPTH_CAP
 		max_items_cap = @max_items_cap || DEFAULT_MAX_ITEMS_CAP
+		max_depth_increment = @max_depth_increment || MAX_DEPTH_INCREMENT
+		max_items_increment = @max_items_increment || MAX_ITEMS_INCREMENT
 
 		loop do
 			old_str = Difftastic.pretty(old, tab_width:, max_depth:, max_items:)
 			new_str = Difftastic.pretty(new, tab_width:, max_depth:, max_items:)
 
-			# If prettified strings don't differ, the strings probably where truncated to max_depth and/or max_items
-			# PrettyPlease then correctly did not return un-matching strings
+			# If prettified strings don't differ, the strings probably were truncated to max_depth and/or max_items
+			# PrettyPlease then correctly did not return non-matching strings
 			# In that case we increase max_depth & max_items in the loop
 			# until DEFAULT_MAX_ITEMS_CAP or DEFAULT_MAX_DEPTH_CAP is exceeded
 			if old_str != new_str
@@ -54,9 +58,9 @@ class Difftastic::Differ
 			end
 
 			# Increase limits and retry, while never increasing to more than max_depth_cap/max_items_cap
-			# Both values are matched to perform 3 retries, but neither value would increase to more than its max anyways
-			max_depth = [max_depth + MAX_DEPTH_INCREMENT, max_depth_cap].min
-			max_items = [max_items + MAX_ITEMS_INCREMENT, max_items_cap].min
+			# Both values are matched to perform 3 retries, but neither value would increase beyond its cap anyway
+			max_depth = [max_depth + max_depth_increment, max_depth_cap].min
+			max_items = [max_items + max_items_increment, max_items_cap].min
 		end
 	end
 
