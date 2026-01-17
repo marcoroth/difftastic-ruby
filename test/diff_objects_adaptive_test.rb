@@ -8,6 +8,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 	TEST_MAX_DEPTH = 3
 	TEST_MAX_ITEMS = 5
 	TEST_INCREMENT = 1
+	DIFF_UNAVAILABLE_MESSAGE = Difftastic::Differ::DIFF_UNAVAILABLE_MESSAGE
 
 	def differ(**options)
 		Difftastic::Differ.new(
@@ -41,7 +42,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 			output = differ.diff_objects(old, new)
 
-			refute_includes output, "No changes"
+			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
 			assert_includes output, "old"
 			assert_includes output, "new"
 		end
@@ -53,7 +54,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 			output = differ.diff_objects(old, new)
 
-			refute_includes output, "No changes"
+			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
 			assert_includes output, "old"
 			assert_includes output, "new"
 		end
@@ -65,7 +66,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 			output = differ.diff_objects(old, new)
 
-			refute_includes output, "No changes"
+			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
 			assert_includes output, "old"
 			assert_includes output, "new"
 		end
@@ -78,7 +79,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 			output = differ.diff_objects(old, new)
 
-			refute_includes output, "No changes"
+			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
 			assert_includes output, "old"
 			assert_includes output, "new"
 		end
@@ -90,7 +91,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 			output = differ.diff_objects(old, new)
 
-			refute_includes output, "No changes"
+			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
 			assert_includes output, "old"
 			assert_includes output, "new"
 		end
@@ -102,7 +103,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 			output = differ.diff_objects(old, new)
 
-			refute_includes output, "No changes"
+			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
 			assert_includes output, "old"
 			assert_includes output, "new"
 		end
@@ -116,7 +117,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 			output = differ(max_depth: 1).diff_objects(old, new)
 
-			refute_includes output, "No changes"
+			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
 			assert_includes output, "old"
 			assert_includes output, "new"
 		end
@@ -128,7 +129,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 			output = differ(max_items: 1).diff_objects(old, new)
 
-			refute_includes output, "No changes"
+			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
 			assert_includes output, "old"
 			assert_includes output, "new"
 		end
@@ -142,7 +143,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 			output = differ(max_depth_cap: depth + 1).diff_objects(old, new)
 
-			refute_includes output, "No changes"
+			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
 			assert_includes output, "old"
 			assert_includes output, "new"
 		end
@@ -154,7 +155,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 			output = differ(max_items_cap: position + 1).diff_objects(old, new)
 
-			refute_includes output, "No changes"
+			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
 			assert_includes output, "old"
 			assert_includes output, "new"
 		end
@@ -169,7 +170,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 			output = differ(max_depth_cap: cap).diff_objects(old, new)
 
-			assert_includes output, Difftastic::Differ::DIFF_UNAVAILABLE_MESSAGE
+			assert_includes output, DIFF_UNAVAILABLE_MESSAGE
 		end
 
 		it "returns unavailable message when position exceeds max_items_cap" do
@@ -180,7 +181,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 			output = differ(max_items_cap: cap).diff_objects(old, new)
 
-			assert_includes output, Difftastic::Differ::DIFF_UNAVAILABLE_MESSAGE
+			assert_includes output, DIFF_UNAVAILABLE_MESSAGE
 		end
 	end
 end
