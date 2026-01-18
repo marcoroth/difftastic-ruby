@@ -8,7 +8,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 	TEST_MAX_DEPTH = 3
 	TEST_MAX_ITEMS = 5
 	TEST_MAX_DEPTH_CAP = 10
-	TEST_MAX_ITEMS_CAP = 20
+	TEST_MAX_ITEMS_CAP = 12
 	TEST_INCREMENT = 1
 	DIFF_UNAVAILABLE_MESSAGE = Difftastic::Differ::DIFF_UNAVAILABLE_MESSAGE
 
@@ -119,7 +119,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 	describe "configurable starting values" do
 		it "respects custom max_depth" do
-			depth = TEST_MAX_DEPTH - 2
+			depth = TEST_MAX_DEPTH_CAP - 1
 			old = nested_hash(depth, "old")
 			new = nested_hash(depth, "new")
 
@@ -131,7 +131,7 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 		end
 
 		it "respects custom max_items" do
-			position = TEST_MAX_ITEMS - 2
+			position = TEST_MAX_ITEMS_CAP - 1
 			old = array_with_diff_at(position, "old")
 			new = array_with_diff_at(position, "new")
 
@@ -145,11 +145,23 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 	describe "configurable caps" do
 		it "respects custom max_depth_cap" do
-			depth = TEST_MAX_DEPTH + 3
+			depth = TEST_MAX_DEPTH - 1
 			old = nested_hash(depth, "old")
 			new = nested_hash(depth, "new")
 
-			output = differ(max_depth_cap: depth + 1).diff_objects(old, new)
+			output = differ(max_depth_cap: TEST_MAX_DEPTH).diff_objects(old, new)
+
+			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
+			assert_includes output, "old"
+			assert_includes output, "new"
+		end
+
+		it "respects custom max_items_cap" do
+			position = TEST_MAX_ITEMS - 1
+			old = array_with_diff_at(position, "old")
+			new = array_with_diff_at(position, "new")
+
+			output = differ(max_items_cap: TEST_MAX_ITEMS).diff_objects(old, new)
 
 			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
 			assert_includes output, "old"
@@ -158,45 +170,50 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 		it "returns unavailable when depth exceeds custom max_depth_cap" do
 			cap = 2
-			old = nested_hash(cap + 1, "old")
-			new = nested_hash(cap + 1, "new")
+			old = nested_hash(cap, "old")
+			new = nested_hash(cap, "new")
 
 			# Both caps must be hit (&&), and starting max must be smaller than cap to trigger truncation
 			output = differ(max_depth: 1, max_depth_cap: cap, max_items_cap: 1).diff_objects(old, new)
 
 			assert_includes output, DIFF_UNAVAILABLE_MESSAGE
+			refute_includes output, "old"
+			refute_includes output, "new"
 		end
 
-		it "respects custom max_items_cap" do
-			position = TEST_MAX_ITEMS + 5
-			old = array_with_diff_at(position, "old")
-			new = array_with_diff_at(position, "new")
+		it "returns unavailable when position exceeds custom max_items_cap" do
+			cap = 2
+			old = array_with_diff_at(cap, "old")
+			new = array_with_diff_at(cap, "new")
 
-			output = differ(max_items_cap: position + 1).diff_objects(old, new)
+			# Both caps must be hit (&&), and starting max must be smaller than cap to trigger truncation
+			output = differ(max_items: 1, max_depth_cap: 1, max_items_cap: cap).diff_objects(old, new)
+
+			assert_includes output, DIFF_UNAVAILABLE_MESSAGE
+			refute_includes output, "old"
+			refute_includes output, "new"
+		end
+
+		it "uses starting max_items when higher than cap without adaptation" do
+			cap = 2
+			old = array_with_diff_at(cap, "old")
+			new = array_with_diff_at(cap, "new")
+
+			# With max_items: 5 (default) > max_items_cap: 2, no truncation occurs, diff found immediately
+			output = differ(max_items_cap: cap).diff_objects(old, new)
 
 			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
 			assert_includes output, "old"
 			assert_includes output, "new"
 		end
 
-		it "returns unavailable when position exceeds custom max_items_cap" do
+		it "uses starting max_depth when higher than cap without adaptation" do
 			cap = 2
-			old = array_with_diff_at(cap + 1, "old")
-			new = array_with_diff_at(cap + 1, "new")
+			old = nested_hash(cap, "old")
+			new = nested_hash(cap, "new")
 
-			# Both caps must be hit (&&), and starting max must be smaller than cap to trigger truncation
-			output = differ(max_items: 1, max_depth_cap: 1, max_items_cap: cap).diff_objects(old, new)
-
-			assert_includes output, DIFF_UNAVAILABLE_MESSAGE
-		end
-
-		it "uses starting max when higher than cap without adaptation" do
-			cap = 2
-			old = array_with_diff_at(cap + 1, "old")
-			new = array_with_diff_at(cap + 1, "new")
-
-			# With max_items: 5 (default) > cap: 2, no truncation occurs, diff found immediately
-			output = differ(max_items_cap: cap).diff_objects(old, new)
+			# With max_depth: 3 (default) > max_depth_cap: 2, no truncation occurs, diff found immediately
+			output = differ(max_depth_cap: cap).diff_objects(old, new)
 
 			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
 			assert_includes output, "old"
@@ -206,23 +223,21 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 
 	describe "loop termination at caps" do
 		it "returns unavailable message when depth exceeds max_depth_cap" do
-			cap = TEST_MAX_DEPTH + 2
-			depth = cap + 1
+			depth = TEST_MAX_DEPTH_CAP + 1
 			old = nested_hash(depth, "old")
 			new = nested_hash(depth, "new")
 
-			output = differ(max_depth_cap: cap).diff_objects(old, new)
+			output = differ.diff_objects(old, new)
 
 			assert_includes output, DIFF_UNAVAILABLE_MESSAGE
 		end
 
 		it "returns unavailable message when position exceeds max_items_cap" do
-			cap = TEST_MAX_ITEMS + 5
-			position = cap + 1
+			position = TEST_MAX_ITEMS_CAP + 1
 			old = array_with_diff_at(position, "old")
 			new = array_with_diff_at(position, "new")
 
-			output = differ(max_items_cap: cap).diff_objects(old, new)
+			output = differ.diff_objects(old, new)
 
 			assert_includes output, DIFF_UNAVAILABLE_MESSAGE
 		end
