@@ -7,6 +7,8 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 	# The adaptive logic works the same regardless of the actual values.
 	TEST_MAX_DEPTH = 3
 	TEST_MAX_ITEMS = 5
+	TEST_MAX_DEPTH_CAP = 10
+	TEST_MAX_ITEMS_CAP = 20
 	TEST_INCREMENT = 1
 	DIFF_UNAVAILABLE_MESSAGE = Difftastic::Differ::DIFF_UNAVAILABLE_MESSAGE
 
@@ -15,6 +17,8 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 			color: :never,
 			max_depth: TEST_MAX_DEPTH,
 			max_items: TEST_MAX_ITEMS,
+			max_depth_cap: TEST_MAX_DEPTH_CAP,
+			max_items_cap: TEST_MAX_ITEMS_CAP,
 			max_depth_increment: TEST_INCREMENT,
 			max_items_increment: TEST_INCREMENT,
 			**options # overrides defaults when provided
@@ -24,8 +28,12 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 	# Example:
 	#   nested_hash(4, "x")
 	#   # => { l1: { l2: { l3: { l4: "x" } } } }
-	def nested_hash(depth, leaf_value)
-		(1..depth).reverse_each.reduce(leaf_value) { |inner, i| { "l#{i}": inner } }
+	def nested_hash(depth, nested_value)
+		(1..depth)
+			.reverse_each
+			.reduce(nested_value) do |inner, i|
+				{ "l#{i}": inner }
+			end
 	end
 
 	# Example:
@@ -148,12 +156,47 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 			assert_includes output, "new"
 		end
 
+		it "returns unavailable when depth exceeds custom max_depth_cap" do
+			cap = 2
+			old = nested_hash(cap + 1, "old")
+			new = nested_hash(cap + 1, "new")
+
+			# Both caps must be hit (&&), and starting max must be smaller than cap to trigger truncation
+			output = differ(max_depth: 1, max_depth_cap: cap, max_items_cap: 1).diff_objects(old, new)
+
+			assert_includes output, DIFF_UNAVAILABLE_MESSAGE
+		end
+
 		it "respects custom max_items_cap" do
 			position = TEST_MAX_ITEMS + 5
 			old = array_with_diff_at(position, "old")
 			new = array_with_diff_at(position, "new")
 
 			output = differ(max_items_cap: position + 1).diff_objects(old, new)
+
+			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
+			assert_includes output, "old"
+			assert_includes output, "new"
+		end
+
+		it "returns unavailable when position exceeds custom max_items_cap" do
+			cap = 2
+			old = array_with_diff_at(cap + 1, "old")
+			new = array_with_diff_at(cap + 1, "new")
+
+			# Both caps must be hit (&&), and starting max must be smaller than cap to trigger truncation
+			output = differ(max_items: 1, max_depth_cap: 1, max_items_cap: cap).diff_objects(old, new)
+
+			assert_includes output, DIFF_UNAVAILABLE_MESSAGE
+		end
+
+		it "uses starting max when higher than cap without adaptation" do
+			cap = 2
+			old = array_with_diff_at(cap + 1, "old")
+			new = array_with_diff_at(cap + 1, "new")
+
+			# With max_items: 5 (default) > cap: 2, no truncation occurs, diff found immediately
+			output = differ(max_items_cap: cap).diff_objects(old, new)
 
 			refute_includes output, DIFF_UNAVAILABLE_MESSAGE
 			assert_includes output, "old"
