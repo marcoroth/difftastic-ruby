@@ -230,6 +230,8 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 			output = differ.diff_objects(old, new)
 
 			assert_includes output, DIFF_UNAVAILABLE_MESSAGE
+			refute_includes output, "old"
+			refute_includes output, "new"
 		end
 
 		it "returns unavailable message when position exceeds max_items_cap" do
@@ -240,6 +242,8 @@ class DiffObjectsAdaptiveTest < Minitest::Spec
 			output = differ.diff_objects(old, new)
 
 			assert_includes output, DIFF_UNAVAILABLE_MESSAGE
+			refute_includes output, "old"
+			refute_includes output, "new"
 		end
 	end
 end
