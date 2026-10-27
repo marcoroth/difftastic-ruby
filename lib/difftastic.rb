@@ -25,6 +25,10 @@ module Difftastic
 		`#{executable} #{command}`
 	end
 
+	def self.capture(*arguments)
+		IO.popen([executable, *arguments], &:read)
+	end
+
 	def self.platform
 		[:cpu, :os].map { |m| Gem::Platform.local.__send__(m) }.join("-")
 	end

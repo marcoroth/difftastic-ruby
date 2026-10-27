@@ -298,9 +298,9 @@ class Difftastic::Differ
 			("--tab-width=#{@tab_width}" if @tab_width),
 			("--display=#{@display}" if @display),
 			("--width=#{@width}" if @width),
-		].compact!
+		].compact
 
-		result = Difftastic.execute(options.join(" ")).lstrip.sub(/\n{2}\z/, "")
+		result = Difftastic.capture(*options).lstrip.sub(/\n{2}\z/, "")
 
 		unless @show_paths
 			new_line_index = (result.index("\n") || 0) + 1
